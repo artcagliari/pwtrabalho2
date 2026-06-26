@@ -134,8 +134,21 @@ wss.on("connection", (socket) => {
         username: cliente.username,
         color: cliente.color,
         texto: texto,
+        hora: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
       });
-    }
+      // 4.2 Evento: cliente desconectou
+    socket.on("close", () => {
+      const cliente = clientes.get(socket);
+      if (cliente) {
+        clientes.delete(socket);
+        broadcast({
+          tipo: "sistema",
+          texto: `${cliente.username} saiu da sala.`,
+          usuarios: listaUsuarios(),
+        });
+      }
+    });
+     }
   });
 });
 
