@@ -102,7 +102,14 @@ wss.on("connection", (socket) => {
       const username = String(msg.username).trim().slice(0, 20);
 
       // @TODO Implementar verificação de nickname duplicado
-
+const nomeEmUso = [...clientes.values()].some(c => c.username.toLowerCase() === username.toLowerCase());
+      if (!username || nomeEmUso) {
+        enviar(socket, {
+          tipo: "erro",
+          texto: "Nickname inválido ou já em uso.",
+        });
+        return;
+      }
       // Registra o cliente
       const cor = proximaCor();
       clientes.set(socket, { username, color: cor});
